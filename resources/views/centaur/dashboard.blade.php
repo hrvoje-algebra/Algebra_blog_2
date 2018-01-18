@@ -16,11 +16,6 @@
             <p><a class="btn btn-primary btn-lg" href="{{ route('auth.login.form') }}" role="button">Log In</a></p>
         </div>
     @endif
-
-    <?php
-        $user = Sentinel::findById(1);
-
-        // var_dump(Activation::create($user));
-    ?>
+   
 </div>
 @stop

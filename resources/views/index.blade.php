@@ -5,7 +5,7 @@
 @section('content')
 <div class="row">
   
-  <?php dd($posts); ?>
+  
    
 </div>
 @stop

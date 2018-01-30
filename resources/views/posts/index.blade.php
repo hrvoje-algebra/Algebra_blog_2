@@ -34,10 +34,16 @@
 							<td>{{$post->title}}</td>
 							<td>{{$post->user->email}}</td>
 							<td>{{\Carbon\Carbon::createFromTimestamp(strtotime($post->created_at))->diffForHumans()}}</td>
-							<td>{{\Carbon\Carbon::createFromTimestamp(strtotime($post->updatet_at))->diffForHumans()}}</td>
 							<td>
-								<a href="#" class="btn btn-default btn-sm">Edit</a>
-								<a href="#" class="btn btn-danger btn-sm">Delete</a>
+							@if($post->updated_at !== null)
+				              {{\Carbon\Carbon::createFromTimestamp(strtotime($post->updated_at))->diffForHumans()}}
+							@else
+								{{ 'Never' }}
+							@endif
+							</td>
+							<td>
+								<a href="{{route('posts.edit', $post->id)}}" class="btn btn-default btn-sm">Edit</a>
+								<a href="{{route('posts.destroy', $post->id)}}" class="btn btn-danger btn-sm action_confirm" data-method="delete" data-token="{{csrf_token()}}">Delete</a>
 							</td>
 						</tr>
 					@endforeach

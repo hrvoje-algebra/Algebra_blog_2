@@ -30,7 +30,10 @@ class Post extends Model
      */
 	 public function savePost($post)
 	 {
-		 return $this->fill($post)->save();
+		 // fill + save spremaju u bazu, ali ne vracaju Post objekt
+		 //return $this->fill($post)->save();
+		 // create sprema u bazu i vraca Post objekt na controller
+		 return $this->create($post);
 	 }
 	 
 	  /**

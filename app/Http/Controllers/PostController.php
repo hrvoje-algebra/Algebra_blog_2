@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Http\Requests\StorePost;
 use Sentinel;
 
 class PostController extends Controller
@@ -40,7 +41,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -49,9 +50,28 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(StorePost $request)
+    {	
+		//vidimo da je isti csrf token u sesiji i u formi
+        //dd($request);
+		
+		//dohvacamo podatke koje zelimo spremiti
+		$post = array(
+			'title'		=> $request->get('title'),
+			'content'	=> $request->get('content'),
+			'user_id'	=> Sentinel::getUser()->id
+		);
+		
+		//dd($post);
+		
+		$new_post = new Post();
+		
+		$data = $new_post->savePost($post);
+		
+		//dd($data);
+		
+		session()->flash('success', 'You have successfully created a new post');
+		return redirect()->route('posts.index');
     }
 
     /**
@@ -73,7 +93,18 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::findOrFail($id);
+		//dd($post);
+		
+		if(Sentinel::getUser()->id === $post->user_id || Sentinel::inRole('administrator')){
+			//echo 'Moze';
+			return view('posts.edit')->with('post', $post);
+		}else{
+			session()->flash('info', 'You are not authorized to edit this post');
+			return redirect()->route('posts.index');
+		}
+		
+			
     }
 
     /**
@@ -83,9 +114,26 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StorePost $request, $id)
     {
-        //
+        $post = Post::findOrFail($id);
+		
+		//dohvacamo podatke koje zelimo update-ti
+		$post_data = array(
+			'title'		=> $request->get('title'),
+			'content'	=> $request->get('content'),
+		);
+		
+	    if(Sentinel::getUser()->id === $post->user_id || Sentinel::inRole('administrator')){
+			$post->updatePost($post_data);
+		}else{
+			session()->flash('info', 'You are not authorized to edit this post');
+			return redirect()->route('posts.index');
+		}
+		
+		session()->flash('success', 'You have successfully updated this post');
+		return redirect()->route('posts.index');
+		
     }
 
     /**
@@ -96,6 +144,17 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $post = Post::findOrFail($id);
+	   
+	   if(Sentinel::getUser()->id === $post->user_id || Sentinel::inRole('administrator')){
+			$post->delete();
+	   }else{
+			session()->flash('info', 'You are not authorized to delete this post');
+			return redirect()->route('posts.index');
+	   }
+	   
+	   session()->flash('success', 'You have successfully deleted this post');
+	   return redirect()->route('posts.index');
+	   
     }
 }

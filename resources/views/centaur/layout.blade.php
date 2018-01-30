@@ -16,6 +16,7 @@
             <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+		@stack('tinymce')
     </head>
     <body>
         <nav class="navbar navbar-default">
@@ -35,7 +36,7 @@
                     <ul class="nav navbar-nav">
                         <li class="{{ Request::is('/dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}">Dashboard</a></li>
 						@if (Sentinel::check())
-							<li class="{{ Request::is('posts*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}">Posts</a></li>
+							<li class="{{ Request::is('posts*') ? 'active' : '' }}"><a href="{{ route('posts.index') }}">Posts</a></li>
 						@endif
                         @if (Sentinel::check() && Sentinel::inRole('administrator'))
                             <li class="{{ Request::is('users*') ? 'active' : '' }}"><a href="{{ route('users.index') }}">Users</a></li>
